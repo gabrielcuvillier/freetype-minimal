@@ -1,3 +1,5 @@
 config.mk
 objs/vc2010/
-build
+/cmake-build*
+.idea
+/build-*
