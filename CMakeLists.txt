@@ -139,6 +139,29 @@ set(VERSION_MAJOR "2")
 set(VERSION_MINOR "10")
 set(VERSION_PATCH "1")
 
+if (ENABLE_OZ)
+  string(REGEX MATCH "-Os" IS_Os_CXX "${CMAKE_CXX_FLAGS_MINSIZEREL}")
+  if (IS_Os_CXX)
+    string(REGEX REPLACE "-Os" "-Oz" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
+  else ()
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Oz")
+  endif ()
+
+  string(REGEX MATCH "-Os" IS_Os_C "${CMAKE_C_FLAGS_MINSIZEREL}")
+  if (IS_Os_C)
+    string(REGEX REPLACE "-Os" "-Oz" CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
+  else ()
+    set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -Oz")
+  endif ()
+
+  string(REGEX MATCH "-Os" IS_Os_EXE "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}")
+  if (IS_Os_EXE)
+    string(REGEX REPLACE "-Os" "-Oz" CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}")
+  else ()
+    set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} -Oz")
+  endif ()
+endif ()
+
 # Generate LIBRARY_VERSION and LIBRARY_SOVERSION.
 set(LIBTOOL_REGEX "version_info='([0-9]+):([0-9]+):([0-9]+)'")
 file(STRINGS "${PROJECT_SOURCE_DIR}/builds/unix/configure.raw"
@@ -315,45 +338,13 @@ file(GLOB PRIVATE_HEADERS "include/freetype/internal/*.h")
 
 
 set(BASE_SRCS
-  src/autofit/autofit.c
   src/base/ftbase.c
-  src/base/ftbbox.c
-  src/base/ftbdf.c
   src/base/ftbitmap.c
-  src/base/ftcid.c
-  src/base/ftfstype.c
-  src/base/ftgasp.c
-  src/base/ftglyph.c
-  src/base/ftgxval.c
   src/base/ftinit.c
-  src/base/ftmm.c
-  src/base/ftotval.c
-  src/base/ftpatent.c
-  src/base/ftpfr.c
-  src/base/ftstroke.c
-  src/base/ftsynth.c
   src/base/ftsystem.c
-  src/base/fttype1.c
-  src/base/ftwinfnt.c
-  src/bdf/bdf.c
-  src/bzip2/ftbzip2.c
-  src/cache/ftcache.c
-  src/cff/cff.c
-  src/cid/type1cid.c
-  src/gzip/ftgzip.c
-  src/lzw/ftlzw.c
-  src/pcf/pcf.c
-  src/pfr/pfr.c
-  src/psaux/psaux.c
-  src/pshinter/pshinter.c
-  src/psnames/psnames.c
-  src/raster/raster.c
   src/sfnt/sfnt.c
   src/smooth/smooth.c
   src/truetype/truetype.c
-  src/type1/type1.c
-  src/type42/type42.c
-  src/winfonts/winfnt.c
 )
 
 if (WIN32)
