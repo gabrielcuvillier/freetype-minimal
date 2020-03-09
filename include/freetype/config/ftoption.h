@@ -110,7 +110,7 @@ FT_BEGIN_HEADER
    * ```
    *
    */
-//#define FT_CONFIG_OPTION_ENVIRONMENT_PROPERTIES
+#define FT_CONFIG_OPTION_ENVIRONMENT_PROPERTIES
 
 
   /**************************************************************************
@@ -254,7 +254,7 @@ FT_BEGIN_HEADER
    * stream support, in the cases where file stream support is not necessary
    * such as memory loading of font files.
    */
-#define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
+//#define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
 
 
   /**************************************************************************
@@ -272,7 +272,7 @@ FT_BEGIN_HEADER
    *   options set by those programs have precedence, overwriting the value
    *   here with the configured one.
    */
-/* #define FT_CONFIG_OPTION_USE_PNG */
+#define FT_CONFIG_OPTION_USE_PNG
 
 
   /**************************************************************************
@@ -330,7 +330,7 @@ FT_BEGIN_HEADER
    *   You would normally undefine this configuration macro when building a
    *   version of FreeType that doesn't contain a Type~1 or CFF driver.
    */
-//#define FT_CONFIG_OPTION_POSTSCRIPT_NAMES
+#define FT_CONFIG_OPTION_POSTSCRIPT_NAMES
 
 
   /**************************************************************************
@@ -537,7 +537,7 @@ FT_BEGIN_HEADER
    * embedded bitmaps in all formats using the 'sfnt' module (namely
    * TrueType~& OpenType).
    */
-//#define TT_CONFIG_OPTION_EMBEDDED_BITMAPS
+#define TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
 
   /**************************************************************************
@@ -546,7 +546,7 @@ FT_BEGIN_HEADER
    * outlines (from the 'COLR'/'CPAL' tables) in all formats using the 'sfnt'
    * module (namely TrueType~& OpenType).
    */
-//#define TT_CONFIG_OPTION_COLOR_LAYERS
+#define TT_CONFIG_OPTION_COLOR_LAYERS
 
 
   /**************************************************************************
@@ -561,7 +561,7 @@ FT_BEGIN_HEADER
    *
    * (By default, the module uses 'psnames' to extract glyph names.)
    */
-//#define TT_CONFIG_OPTION_POSTSCRIPT_NAMES
+#define TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 
 
   /**************************************************************************
