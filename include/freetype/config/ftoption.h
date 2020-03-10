@@ -168,7 +168,7 @@ FT_BEGIN_HEADER
    * Note that if your compiler or CPU is not supported, this will default to
    * the standard and portable implementation found in `ftcalc.c`.
    */
-//#define FT_CONFIG_OPTION_INLINE_MULFIX
+#define FT_CONFIG_OPTION_INLINE_MULFIX
 
 
   /**************************************************************************
@@ -183,7 +183,7 @@ FT_BEGIN_HEADER
    *
    *   Define this macro if you want to enable this 'feature'.
    */
-//#define FT_CONFIG_OPTION_USE_LZW
+/* #define FT_CONFIG_OPTION_USE_LZW */
 
 
   /**************************************************************************
@@ -254,7 +254,7 @@ FT_BEGIN_HEADER
    * stream support, in the cases where file stream support is not necessary
    * such as memory loading of font files.
    */
-//#define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
+/* #define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT */
 
 
   /**************************************************************************
@@ -347,7 +347,7 @@ FT_BEGIN_HEADER
    *   in your 'psnames' module.  The Type~1 driver will not be able to
    *   synthesize a Unicode charmap out of the glyphs found in the fonts.
    */
-//#define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
+/* #define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 
   /**************************************************************************
@@ -360,7 +360,7 @@ FT_BEGIN_HEADER
    *
    *   Note that the 'FOND' resource isn't checked.
    */
-//#define FT_CONFIG_OPTION_MAC_FONTS
+/* #define FT_CONFIG_OPTION_MAC_FONTS */
 
 
   /**************************************************************************
@@ -392,7 +392,7 @@ FT_BEGIN_HEADER
    * incrementally as the document is parsed, such as the Ghostscript
    * interpreter for the PostScript language.
    */
-//#define FT_CONFIG_OPTION_INCREMENTAL
+/* #define FT_CONFIG_OPTION_INCREMENTAL */
 
 
   /**************************************************************************
@@ -575,7 +575,7 @@ FT_BEGIN_HEADER
    * Accessing SFNT names is done through the functions declared in
    * `ftsnames.h`.
    */
-//#define TT_CONFIG_OPTION_SFNT_NAMES
+/* #define TT_CONFIG_OPTION_SFNT_NAMES */
 
 
   /**************************************************************************
@@ -615,7 +615,7 @@ FT_BEGIN_HEADER
    * Do not `#undef` this macro here, since the build system might define it
    * for certain configurations only.
    */
-//#define TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+/* #define TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 
 
   /**************************************************************************
@@ -674,7 +674,7 @@ FT_BEGIN_HEADER
    * https://www.microsoft.com/typography/cleartype/truetypecleartype.aspx
    */
 /* #define TT_CONFIG_OPTION_SUBPIXEL_HINTING  1         */
-//#define TT_CONFIG_OPTION_SUBPIXEL_HINTING  2
+#define TT_CONFIG_OPTION_SUBPIXEL_HINTING  2
 /* #define TT_CONFIG_OPTION_SUBPIXEL_HINTING  ( 1 | 2 ) */
 
 
@@ -694,7 +694,7 @@ FT_BEGIN_HEADER
    *   https://www.microsoft.com/typography/otspec/glyf.htm
    *   https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html
    */
-//#undef TT_CONFIG_OPTION_COMPONENT_OFFSET_SCALED
+#undef TT_CONFIG_OPTION_COMPONENT_OFFSET_SCALED
 
 
   /**************************************************************************
@@ -704,7 +704,7 @@ FT_BEGIN_HEADER
    * 'avar' tables).  Tagged 'Font Variations', this is now part of OpenType
    * also.  This has many similarities to Type~1 Multiple Masters support.
    */
-//#define TT_CONFIG_OPTION_GX_VAR_SUPPORT
+/* #define TT_CONFIG_OPTION_GX_VAR_SUPPORT */
 
 
   /**************************************************************************
@@ -712,7 +712,7 @@ FT_BEGIN_HEADER
    * Define `TT_CONFIG_OPTION_BDF` if you want to include support for an
    * embedded 'BDF~' table within SFNT-based bitmap formats.
    */
-//#define TT_CONFIG_OPTION_BDF
+/* #define TT_CONFIG_OPTION_BDF */
 
 
   /**************************************************************************

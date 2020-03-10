@@ -87,13 +87,27 @@
 # FreeType explicitly marks the API to be exported and relies on the compiler
 # to hide all other symbols. CMake supports a C_VISBILITY_PRESET property
 # starting with 2.8.12.
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.1)
+cmake_policy(VERSION 3.1)
 
 if (NOT CMAKE_VERSION VERSION_LESS 3.3)
   # Allow symbol visibility settings also on static libraries. CMake < 3.3
   # only sets the property on a shared library build.
   cmake_policy(SET CMP0063 NEW)
 endif ()
+
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
+  # GAB: Allow new behavior for find_package with <LIBNAME>_ROOT defined
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
+if (DEFINED ZLIB_ROOT)
+  list(APPEND CMAKE_FIND_ROOT_PATH ${ZLIB_ROOT})
+endif()
+
+if (DEFINED PNG_ROOT)
+  list(APPEND CMAKE_FIND_ROOT_PATH ${PNG_ROOT})
+endif()
 
 include(CheckIncludeFile)
 
@@ -102,29 +116,29 @@ include(CheckIncludeFile)
 if (APPLE)
   if (DEFINED IOS_PLATFORM)
     if (NOT "${IOS_PLATFORM}" STREQUAL "OS"
-        AND NOT "${IOS_PLATFORM}" STREQUAL "SIMULATOR"
-        AND NOT "${IOS_PLATFORM}" STREQUAL "SIMULATOR64")
+            AND NOT "${IOS_PLATFORM}" STREQUAL "SIMULATOR"
+            AND NOT "${IOS_PLATFORM}" STREQUAL "SIMULATOR64")
       message(FATAL_ERROR
-        "IOS_PLATFORM must be set to either OS, SIMULATOR, or SIMULATOR64")
+              "IOS_PLATFORM must be set to either OS, SIMULATOR, or SIMULATOR64")
     endif ()
     if (NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode")
       message(AUTHOR_WARNING
-        "You should use Xcode generator with IOS_PLATFORM enabled to get Universal builds.")
+              "You should use Xcode generator with IOS_PLATFORM enabled to get Universal builds.")
     endif ()
     if (BUILD_SHARED_LIBS)
       message(FATAL_ERROR
-        "BUILD_SHARED_LIBS can not be on with IOS_PLATFORM enabled")
+              "BUILD_SHARED_LIBS can not be on with IOS_PLATFORM enabled")
     endif ()
     if (BUILD_FRAMEWORK)
       message(FATAL_ERROR
-        "BUILD_FRAMEWORK can not be on with IOS_PLATFORM enabled")
+              "BUILD_FRAMEWORK can not be on with IOS_PLATFORM enabled")
     endif ()
 
     # iOS only uses static libraries
     set(BUILD_SHARED_LIBS OFF)
 
     set(CMAKE_TOOLCHAIN_FILE
-      ${CMAKE_SOURCE_DIR}/builds/cmake/iOS.cmake)
+            ${CMAKE_SOURCE_DIR}/builds/cmake/iOS.cmake)
   endif ()
 else ()
   if (DEFINED IOS_PLATFORM)
@@ -139,43 +153,20 @@ set(VERSION_MAJOR "2")
 set(VERSION_MINOR "10")
 set(VERSION_PATCH "1")
 
-if (ENABLE_OZ)
-  string(REGEX MATCH "-Os" IS_Os_CXX "${CMAKE_CXX_FLAGS_MINSIZEREL}")
-  if (IS_Os_CXX)
-    string(REGEX REPLACE "-Os" "-Oz" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
-  else ()
-    set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -Oz")
-  endif ()
-
-  string(REGEX MATCH "-Os" IS_Os_C "${CMAKE_C_FLAGS_MINSIZEREL}")
-  if (IS_Os_C)
-    string(REGEX REPLACE "-Os" "-Oz" CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
-  else ()
-    set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -Oz")
-  endif ()
-
-  string(REGEX MATCH "-Os" IS_Os_EXE "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}")
-  if (IS_Os_EXE)
-    string(REGEX REPLACE "-Os" "-Oz" CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL}")
-  else ()
-    set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} -Oz")
-  endif ()
-endif ()
-
 # Generate LIBRARY_VERSION and LIBRARY_SOVERSION.
 set(LIBTOOL_REGEX "version_info='([0-9]+):([0-9]+):([0-9]+)'")
 file(STRINGS "${PROJECT_SOURCE_DIR}/builds/unix/configure.raw"
-  VERSION_INFO
-  REGEX ${LIBTOOL_REGEX})
+        VERSION_INFO
+        REGEX ${LIBTOOL_REGEX})
 string(REGEX REPLACE
-  ${LIBTOOL_REGEX} "\\1"
-  LIBTOOL_CURRENT "${VERSION_INFO}")
+        ${LIBTOOL_REGEX} "\\1"
+        LIBTOOL_CURRENT "${VERSION_INFO}")
 string(REGEX REPLACE
-  ${LIBTOOL_REGEX} "\\2"
-  LIBTOOL_REVISION "${VERSION_INFO}")
+        ${LIBTOOL_REGEX} "\\2"
+        LIBTOOL_REVISION "${VERSION_INFO}")
 string(REGEX REPLACE
-  ${LIBTOOL_REGEX} "\\3"
-  LIBTOOL_AGE "${VERSION_INFO}")
+        ${LIBTOOL_REGEX} "\\3"
+        LIBTOOL_AGE "${VERSION_INFO}")
 
 # This is what libtool does internally on Unix platforms.
 math(EXPR LIBRARY_SOVERSION "${LIBTOOL_CURRENT} - ${LIBTOOL_AGE}")
@@ -195,13 +186,13 @@ option(FT_WITH_BROTLI "Support compressed WOFF2 fonts." OFF)
 # Disallow in-source builds
 if ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
   message(FATAL_ERROR
-    "In-source builds are not permitted!  Make a separate folder for"
-    " building, e.g.,\n"
-    "  cmake -E make_directory build\n"
-    "  cmake -E chdir build cmake ..\n"
-    "Before that, remove the files created by this failed run with\n"
-    "  cmake -E remove CMakeCache.txt\n"
-    "  cmake -E remove_directory CMakeFiles")
+          "In-source builds are not permitted!  Make a separate folder for"
+          " building, e.g.,\n"
+          "  cmake -E make_directory build\n"
+          "  cmake -E chdir build cmake ..\n"
+          "Before that, remove the files created by this failed run with\n"
+          "  cmake -E remove CMakeCache.txt\n"
+          "  cmake -E remove_directory CMakeFiles")
 endif ()
 
 
@@ -212,7 +203,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/builds/cmake)
 if (BUILD_FRAMEWORK)
   if (NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode")
     message(FATAL_ERROR
-      "You should use Xcode generator with BUILD_FRAMEWORK enabled")
+            "You should use Xcode generator with BUILD_FRAMEWORK enabled")
   endif ()
   set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_32_64_BIT)")
   set(BUILD_SHARED_LIBS ON)
@@ -258,27 +249,27 @@ if (UNIX)
   check_include_file("stdint.h" HAVE_STDINT_H)
 
   file(READ "${PROJECT_SOURCE_DIR}/builds/unix/ftconfig.in"
-    FTCONFIG_H)
+          FTCONFIG_H)
   if (HAVE_UNISTD_H)
     string(REGEX REPLACE
-      "#undef +(HAVE_UNISTD_H)" "#define \\1 1"
-      FTCONFIG_H "${FTCONFIG_H}")
+            "#undef +(HAVE_UNISTD_H)" "#define \\1 1"
+            FTCONFIG_H "${FTCONFIG_H}")
   endif ()
   if (HAVE_FCNTL_H)
     string(REGEX REPLACE
-      "#undef +(HAVE_FCNTL_H)" "#define \\1 1"
-      FTCONFIG_H "${FTCONFIG_H}")
+            "#undef +(HAVE_FCNTL_H)" "#define \\1 1"
+            FTCONFIG_H "${FTCONFIG_H}")
   endif ()
   if (HAVE_STDINT_H)
     string(REGEX REPLACE
-      "#undef +(HAVE_STDINT_H)" "#define \\1 1"
-      FTCONFIG_H "${FTCONFIG_H}")
+            "#undef +(HAVE_STDINT_H)" "#define \\1 1"
+            FTCONFIG_H "${FTCONFIG_H}")
   endif ()
   string(REPLACE "/undef " "#undef "
-    FTCONFIG_H "${FTCONFIG_H}")
+          FTCONFIG_H "${FTCONFIG_H}")
 else ()
   file(READ "${PROJECT_SOURCE_DIR}/include/freetype/config/ftconfig.h"
-    FTCONFIG_H)
+          FTCONFIG_H)
 endif ()
 
 set(FTCONFIG_H_NAME "${PROJECT_BINARY_DIR}/include/freetype/config/ftconfig.h")
@@ -294,31 +285,31 @@ endif ()
 
 # Create the options file
 file(READ "${PROJECT_SOURCE_DIR}/include/freetype/config/ftoption.h"
-  FTOPTION_H)
+        FTOPTION_H)
 if (ZLIB_FOUND)
   string(REGEX REPLACE
-    "/\\* +(#define +FT_CONFIG_OPTION_SYSTEM_ZLIB) +\\*/" "\\1"
-    FTOPTION_H "${FTOPTION_H}")
+          "/\\* +(#define +FT_CONFIG_OPTION_SYSTEM_ZLIB) +\\*/" "\\1"
+          FTOPTION_H "${FTOPTION_H}")
 endif ()
 if (BZIP2_FOUND)
   string(REGEX REPLACE
-    "/\\* +(#define +FT_CONFIG_OPTION_USE_BZIP2) +\\*/" "\\1"
-    FTOPTION_H "${FTOPTION_H}")
+          "/\\* +(#define +FT_CONFIG_OPTION_USE_BZIP2) +\\*/" "\\1"
+          FTOPTION_H "${FTOPTION_H}")
 endif ()
 if (PNG_FOUND)
   string(REGEX REPLACE
-    "/\\* +(#define +FT_CONFIG_OPTION_USE_PNG) +\\*/" "\\1"
-    FTOPTION_H "${FTOPTION_H}")
+          "/\\* +(#define +FT_CONFIG_OPTION_USE_PNG) +\\*/" "\\1"
+          FTOPTION_H "${FTOPTION_H}")
 endif ()
 if (HARFBUZZ_FOUND)
   string(REGEX REPLACE
-    "/\\* +(#define +FT_CONFIG_OPTION_USE_HARFBUZZ) +\\*/" "\\1"
-    FTOPTION_H "${FTOPTION_H}")
+          "/\\* +(#define +FT_CONFIG_OPTION_USE_HARFBUZZ) +\\*/" "\\1"
+          FTOPTION_H "${FTOPTION_H}")
 endif ()
 if (BROTLIDEC_FOUND)
   string(REGEX REPLACE
-    "/\\* +(#define +FT_CONFIG_OPTION_USE_BROTLI) +\\*/" "\\1"
-    FTOPTION_H "${FTOPTION_H}")
+          "/\\* +(#define +FT_CONFIG_OPTION_USE_BROTLI) +\\*/" "\\1"
+          FTOPTION_H "${FTOPTION_H}")
 endif ()
 
 set(FTOPTION_H_NAME "${PROJECT_BINARY_DIR}/include/freetype/config/ftoption.h")
@@ -338,19 +329,20 @@ file(GLOB PRIVATE_HEADERS "include/freetype/internal/*.h")
 
 
 set(BASE_SRCS
-  src/base/ftbase.c
-  src/base/ftbitmap.c
-  src/base/ftinit.c
-  src/base/ftsystem.c
-  src/sfnt/sfnt.c
-  src/smooth/smooth.c
-  src/truetype/truetype.c
-)
+        src/base/ftbase.c
+        src/base/ftbitmap.c
+        src/base/ftinit.c
+        src/base/ftsystem.c
+        src/sfnt/sfnt.c
+        src/smooth/smooth.c
+        src/truetype/truetype.c
+        src/psnames/psnames.c
+        )
 
 if (WIN32)
   enable_language(RC)
   list(APPEND BASE_SRCS builds/windows/ftdebug.c
-                        src/base/ftver.rc)
+          src/base/ftver.rc)
 elseif (WINCE)
   list(APPEND BASE_SRCS builds/wince/ftdebug.c)
 else ()
@@ -368,56 +360,56 @@ endif ()
 
 
 add_library(freetype
-  ${PUBLIC_HEADERS}
-  ${PUBLIC_CONFIG_HEADERS}
-  ${PRIVATE_HEADERS}
-  ${BASE_SRCS}
-)
+        ${PUBLIC_HEADERS}
+        ${PUBLIC_CONFIG_HEADERS}
+        ${PRIVATE_HEADERS}
+        ${BASE_SRCS}
+        )
 
 set_target_properties(
-  freetype PROPERTIES
-    C_VISIBILITY_PRESET hidden)
+        freetype PROPERTIES
+        C_VISIBILITY_PRESET hidden)
 
 target_compile_definitions(
-  freetype PRIVATE FT2_BUILD_LIBRARY)
+        freetype PRIVATE FT2_BUILD_LIBRARY)
 
 if (WIN32)
   target_compile_definitions(
-    freetype PRIVATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
+          freetype PRIVATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
   if (BUILD_SHARED_LIBS)
     target_compile_definitions(
-      freetype PRIVATE DLL_EXPORT)
+            freetype PRIVATE DLL_EXPORT)
   endif ()
 endif ()
 
 if (BUILD_SHARED_LIBS)
   set_target_properties(freetype PROPERTIES
-    VERSION ${LIBRARY_VERSION}
-    SOVERSION ${LIBRARY_SOVERSION})
+          VERSION ${LIBRARY_VERSION}
+          SOVERSION ${LIBRARY_SOVERSION})
 endif ()
 
 # Pick up ftconfig.h and ftoption.h generated above, first.
 target_include_directories(
-  freetype
-    PUBLIC
-      $<INSTALL_INTERFACE:include/freetype2>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PRIVATE
-      ${CMAKE_CURRENT_BINARY_DIR}/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/include)
+        freetype
+        PUBLIC
+        $<INSTALL_INTERFACE:include/freetype2>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
 if (BUILD_FRAMEWORK)
   set_property(SOURCE ${PUBLIC_CONFIG_HEADERS}
-    PROPERTY MACOSX_PACKAGE_LOCATION Headers/config
-  )
+          PROPERTY MACOSX_PACKAGE_LOCATION Headers/config
+          )
   set_target_properties(freetype PROPERTIES
-    FRAMEWORK TRUE
-    MACOSX_FRAMEWORK_INFO_PLIST builds/mac/freetype-Info.plist
-    PUBLIC_HEADER "${PUBLIC_HEADERS}"
-    XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
-  )
+          FRAMEWORK TRUE
+          MACOSX_FRAMEWORK_INFO_PLIST builds/mac/freetype-Info.plist
+          PUBLIC_HEADER "${PUBLIC_HEADERS}"
+          XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
+          )
 endif ()
 
 
@@ -457,18 +449,18 @@ include(GNUInstallDirs)
 
 if (NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
   install(
-    # Note the trailing slash in the argument to `DIRECTORY'!
-    DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/freetype2
-      COMPONENT headers
-      PATTERN "internal" EXCLUDE
-      PATTERN "ftconfig.h" EXCLUDE
-      PATTERN "ftoption.h" EXCLUDE)
+          # Note the trailing slash in the argument to `DIRECTORY'!
+          DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/freetype2
+          COMPONENT headers
+          PATTERN "internal" EXCLUDE
+          PATTERN "ftconfig.h" EXCLUDE
+          PATTERN "ftoption.h" EXCLUDE)
   install(
-    FILES ${PROJECT_BINARY_DIR}/include/freetype/config/ftconfig.h
+          FILES ${PROJECT_BINARY_DIR}/include/freetype/config/ftconfig.h
           ${PROJECT_BINARY_DIR}/include/freetype/config/ftoption.h
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/freetype2/freetype/config
-      COMPONENT headers)
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/freetype2/freetype/config
+          COMPONENT headers)
 endif ()
 
 if (NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
@@ -479,19 +471,19 @@ if (NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
     string(REPLACE ";" ", " PKG_CONFIG_REQUIRED_PRIVATE "${PKG_CONFIG_REQUIRED_PRIVATE}")
 
     string(REPLACE "%prefix%" ${CMAKE_INSTALL_PREFIX}
-           FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
+            FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
     string(REPLACE "%exec_prefix%" "\${prefix}"
-           FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
+            FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
     string(REPLACE "%libdir%" "\${prefix}/${CMAKE_INSTALL_LIBDIR}"
-           FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
+            FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
     string(REPLACE "%includedir%" "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}"
-           FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
+            FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
     string(REPLACE "%ft_version%" "${LIBTOOL_CURRENT}.${LIBTOOL_REVISION}.${LIBTOOL_AGE}"
-           FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
+            FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
     string(REPLACE "%REQUIRES_PRIVATE%" "${PKG_CONFIG_REQUIRED_PRIVATE}"
-           FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
+            FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
     string(REPLACE "%LIBS_PRIVATE%" ""  # All libs support pkg-config
-           FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
+            FREETYPE2_PC_IN ${FREETYPE2_PC_IN})
 
     set(FREETYPE2_PC_IN_NAME "${PROJECT_BINARY_DIR}/freetype2.pc")
     if (EXISTS "${FREETYPE2_PC_IN_NAME}")
@@ -504,24 +496,24 @@ if (NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
     endif ()
 
     install(
-      FILES ${PROJECT_BINARY_DIR}/freetype2.pc
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-      COMPONENT pkgconfig)
+            FILES ${PROJECT_BINARY_DIR}/freetype2.pc
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+            COMPONENT pkgconfig)
   endif ()
 
   install(
-    TARGETS freetype
-      EXPORT freetype-targets
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      FRAMEWORK DESTINATION Library/Frameworks
-      COMPONENT libraries)
+          TARGETS freetype
+          EXPORT freetype-targets
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+          FRAMEWORK DESTINATION Library/Frameworks
+          COMPONENT libraries)
   install(
-    EXPORT freetype-targets
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/freetype
-      FILE freetype-config.cmake
-      COMPONENT headers)
+          EXPORT freetype-targets
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/freetype
+          FILE freetype-config.cmake
+          COMPONENT headers)
 endif ()
 
 
@@ -545,9 +537,9 @@ endif ()
 set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries")
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C/C++ Headers")
 set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION
-  "Library used to build programs which use FreeType")
+        "Library used to build programs which use FreeType")
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION
-  "C/C++ header files for use with FreeType")
+        "C/C++ header files for use with FreeType")
 set(CPACK_COMPONENT_HEADERS_DEPENDS libraries)
 set(CPACK_COMPONENT_LIBRARIES_GROUP "Development")
 set(CPACK_COMPONENT_HEADERS_GROUP "Development")
