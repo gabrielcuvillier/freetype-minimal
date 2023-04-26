@@ -183,7 +183,7 @@ FT_BEGIN_HEADER
  *
  *   Define this macro if you want to enable this 'feature'.
  */
-#define FT_CONFIG_OPTION_USE_LZW
+/* #define FT_CONFIG_OPTION_USE_LZW */
 
 
 /**************************************************************************
@@ -615,7 +615,7 @@ FT_BEGIN_HEADER
  * Do not `#undef` this macro here, since the build system might define it
  * for certain configurations only.
  */
-#define TT_CONFIG_OPTION_BYTECODE_INTERPRETER
+/* #define TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 
 
 /**************************************************************************
