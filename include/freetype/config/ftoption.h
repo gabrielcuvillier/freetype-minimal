@@ -272,7 +272,7 @@ FT_BEGIN_HEADER
  *   options set by those programs have precedence, overwriting the value
  *   here with the configured one.
  */
-#define FT_CONFIG_OPTION_USE_PNG
+/* #define FT_CONFIG_OPTION_USE_PNG */
 
 
 /**************************************************************************
@@ -537,7 +537,7 @@ FT_BEGIN_HEADER
  * embedded bitmaps in all formats using the 'sfnt' module (namely
  * TrueType~& OpenType).
  */
-#define TT_CONFIG_OPTION_EMBEDDED_BITMAPS
+/* #define TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
 
 /**************************************************************************
