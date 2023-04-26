@@ -214,32 +214,22 @@ endif ()
 set(HARFBUZZ_MIN_VERSION "1.3.0")
 if (FT_WITH_HARFBUZZ)
   find_package(HarfBuzz ${HARFBUZZ_MIN_VERSION} REQUIRED)
-else ()
-  find_package(HarfBuzz ${HARFBUZZ_MIN_VERSION})
 endif ()
 
 if (FT_WITH_PNG)
   find_package(PNG REQUIRED)
-else ()
-  find_package(PNG)
 endif ()
 
 if (FT_WITH_ZLIB)
   find_package(ZLIB REQUIRED)
-else ()
-  find_package(ZLIB)
 endif ()
 
 if (FT_WITH_BZIP2)
   find_package(BZip2 REQUIRED)
-else ()
-  find_package(BZip2)
 endif ()
 
 if (FT_WITH_BROTLI)
   find_package(BrotliDec REQUIRED)
-else ()
-  find_package(BrotliDec)
 endif ()
 
 # Create the configuration file
